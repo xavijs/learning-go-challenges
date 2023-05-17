@@ -6,28 +6,26 @@ import (
 )
 
 type InMemoryAdRepository struct {
+	memory *[]Ad
 }
 
-var memory []Ad
-
-func NewInMemoryAdRepository() InMemoryAdRepository {
-	return InMemoryAdRepository{}
+func NewInMemoryAdRepository(memory *[]Ad) *InMemoryAdRepository {
+	return &InMemoryAdRepository{memory: memory}
+}
+func (receiver *InMemoryAdRepository) Persist(ad Ad) {
+	*receiver.memory = append(*receiver.memory, ad)
+	fmt.Println("AdRepository memory:", receiver.memory)
 }
 
-func (repository InMemoryAdRepository) Persist(ad Ad) {
-	memory = append(memory, ad)
-	fmt.Println("AdRepository memory:", memory)
-}
-
-func (repository InMemoryAdRepository) FindBy(id Id) Ad {
-	for index := range memory {
-		if memory[index].Id == id {
-			return memory[index]
+func (receiver *InMemoryAdRepository) FindBy(id Id) Ad {
+	for _, ad := range *receiver.memory {
+		if ad.Id == id {
+			return ad
 		}
 	}
-	panic("Ad not found!")
+	return Empty()
 }
 
-func (repository InMemoryAdRepository) FindAll() []Ad {
-	return memory
+func (receiver *InMemoryAdRepository) FindAll() []Ad {
+	return *receiver.memory
 }

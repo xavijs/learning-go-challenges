@@ -13,6 +13,18 @@ type Ad struct {
 	PublishedAt time.Time
 }
 
+func Empty() Ad {
+	return Ad{}
+}
+
+func (receiver Ad) isEmpty() bool {
+	if receiver == Empty() {
+		return true
+	} else {
+		return false
+	}
+}
+
 func NewAd(title string, description string, price uint) Ad {
 	return Ad{Id: NewAdId(), Title: title, Description: description, Price: price, PublishedAt: time.Now()}
 }

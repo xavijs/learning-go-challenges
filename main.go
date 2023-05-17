@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"learning-go-challenges/application"
+	"learning-go-challenges/domain/ad"
 	"learning-go-challenges/infrastructure/repository"
 	"math/rand"
 	"strconv"
 )
 
 func main() {
-	adRepository := repository.NewInMemoryAdRepository()
+	adRepository := repository.NewInMemoryAdRepository([]ad.Ad{})
 	postAdService := application.NewPostAdService(adRepository)
 	findAdService := application.NewFindAdService(adRepository)
 	listAdsService := application.NewListAdsService(adRepository)
