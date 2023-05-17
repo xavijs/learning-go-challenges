@@ -23,7 +23,7 @@ func (receiver *InMemoryAdRepository) FindBy(id Id) Ad {
 			return ad
 		}
 	}
-	return Empty()
+	panic("Ad not found")
 }
 
 func (receiver *InMemoryAdRepository) FindAll() []Ad {

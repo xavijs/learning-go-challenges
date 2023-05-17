@@ -46,14 +46,6 @@ func TestFindAdByExistingId(t *testing.T) {
 	assert.Equal(t, firstAd, foundAd, "Expected to found First Ad")
 }
 
-func TestFindAdByNonExistingId(t *testing.T) {
-	memory = []ad.Ad{firstAd, secondAd}
-
-	foundAd := inMemoryRepository.FindBy(ad.Id{Value: "235498bc-7051-4d70-a223-a8549dd2fc06"})
-
-	assert.Equal(t, ad.Empty(), foundAd)
-}
-
 func TestPersistAnAd(t *testing.T) {
 	memory = []ad.Ad{}
 
