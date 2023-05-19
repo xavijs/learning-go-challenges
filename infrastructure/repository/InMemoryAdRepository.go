@@ -12,8 +12,8 @@ type InMemoryAdRepository struct {
 func NewInMemoryAdRepository(memory *[]Ad) *InMemoryAdRepository {
 	return &InMemoryAdRepository{memory: memory}
 }
-func (receiver *InMemoryAdRepository) Persist(ad Ad) {
-	*receiver.memory = append(*receiver.memory, ad)
+func (receiver *InMemoryAdRepository) Persist(ad *Ad) {
+	*receiver.memory = append(*receiver.memory, *ad)
 	fmt.Println("AdRepository memory:", receiver.memory)
 }
 

@@ -23,12 +23,16 @@ type PostAdService struct {
 	Clock         Clock
 }
 
-func NewPostAdService(adRepository AdRepository) *PostAdService {
-	return &PostAdService{AdRepository: adRepository}
+func NewPostAdService(adRepository AdRepository, uuidGenerator UUIDGenerator, clock Clock) *PostAdService {
+	return &PostAdService{
+		AdRepository:  adRepository,
+		UUIDGenerator: uuidGenerator,
+		Clock:         clock,
+	}
 }
 
 func (dependencies *PostAdService) Execute(request PostAdRequest) PostAdResponse {
-	newAd := NewAd(
+	newAd, _ := NewAd(
 		Id{Value: dependencies.UUIDGenerator.GenerateAsString()},
 		request.Title,
 		request.Description,
@@ -37,5 +41,5 @@ func (dependencies *PostAdService) Execute(request PostAdRequest) PostAdResponse
 	)
 	dependencies.AdRepository.Persist(newAd)
 
-	return PostAdResponse{AdResponse: FromDomain(newAd)}
+	return PostAdResponse{AdResponse: FromDomain(*newAd)}
 }
