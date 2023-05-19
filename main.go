@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	adRepository := repository.NewInMemoryAdRepository([]ad.Ad{})
+	adRepository := repository.NewInMemoryAdRepository(&[]ad.Ad{})
 	postAdService := application.NewPostAdService(adRepository)
 	findAdService := application.NewFindAdService(adRepository)
 	listAdsService := application.NewListAdsService(adRepository)

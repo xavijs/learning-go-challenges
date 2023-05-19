@@ -1,4 +1,4 @@
-package application
+package findad
 
 import (
 	"learning-go-challenges/application/response"

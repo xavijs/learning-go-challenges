@@ -3,8 +3,8 @@ package repository
 import (
 	"github.com/stretchr/testify/assert"
 	"learning-go-challenges/domain/ad"
+	"learning-go-challenges/fixtures"
 	"testing"
-	"time"
 )
 
 var (
@@ -12,44 +12,27 @@ var (
 	inMemoryRepository = NewInMemoryAdRepository(&memory)
 )
 
-var (
-	firstAd = ad.Ad{
-		Id:          ad.NewAdId(),
-		Title:       "First Ad Title",
-		Description: "First Ad description",
-		Price:       4,
-		PublishedAt: time.Time{},
-	}
-	secondAd = ad.Ad{
-		Id:          ad.NewAdId(),
-		Title:       "Second Ad title",
-		Description: "Second Ad description",
-		Price:       6,
-		PublishedAt: time.Time{},
-	}
-)
-
 func TestFindAllWith2Ads(t *testing.T) {
-	memory = []ad.Ad{firstAd, secondAd}
+	memory = []ad.Ad{fixtures.FirstAd, fixtures.SecondAd}
 
 	var ads = inMemoryRepository.FindAll()
 
-	assert.Contains(t, ads, firstAd, secondAd)
+	assert.Contains(t, ads, fixtures.FirstAd, fixtures.SecondAd)
 	assert.Len(t, ads, 2)
 }
 
 func TestFindAdByExistingId(t *testing.T) {
-	memory = []ad.Ad{firstAd, secondAd}
+	memory = []ad.Ad{fixtures.FirstAd, fixtures.SecondAd}
 
-	foundAd := inMemoryRepository.FindBy(firstAd.Id)
+	foundAd := inMemoryRepository.FindBy(fixtures.FirstAd.Id)
 
-	assert.Equal(t, firstAd, foundAd, "Expected to found First Ad")
+	assert.Equal(t, fixtures.FirstAd, foundAd, "Expected to found First Ad")
 }
 
 func TestPersistAnAd(t *testing.T) {
 	memory = []ad.Ad{}
 
-	inMemoryRepository.Persist(firstAd)
+	inMemoryRepository.Persist(fixtures.FirstAd)
 
-	assert.Contains(t, memory, firstAd)
+	assert.Contains(t, memory, fixtures.FirstAd)
 }
