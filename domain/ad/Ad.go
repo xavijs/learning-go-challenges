@@ -1,7 +1,7 @@
 package ad
 
 import (
-	"github.com/google/uuid"
+	"learning-go-challenges/domain/ad/exception"
 	"time"
 )
 
@@ -13,14 +13,16 @@ type Ad struct {
 	PublishedAt time.Time
 }
 
-func NewAd(title string, description string, price uint) Ad {
-	return Ad{Id: NewAdId(), Title: title, Description: description, Price: price, PublishedAt: time.Now()}
+func NewAd(id Id, title string, description string, price uint, publishedAt time.Time) (*Ad, error) {
+	const MaxDescriptionLength = 50
+
+	if len(description) > MaxDescriptionLength {
+		return nil, exception.AdDescriptionTooLongException{}
+	}
+
+	return &Ad{Id: id, Title: title, Description: description, Price: price, PublishedAt: publishedAt}, nil
 }
 
 type Id struct {
 	Value string
-}
-
-func NewAdId() Id {
-	return Id{Value: uuid.NewString()}
 }

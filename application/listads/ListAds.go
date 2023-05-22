@@ -1,4 +1,4 @@
-package application
+package listads
 
 import (
 	"learning-go-challenges/application/response"
@@ -31,8 +31,12 @@ func (dependencies ListAdsService) Execute(request ListAdsRequest) ListAdsRespon
 		responseAds = append(responseAds, response.FromDomain(domainAd))
 	}
 	if request.Limit < maxListedAds {
-		return ListAdsResponse{Ads: responseAds[:request.Limit]}
+		return ListAdsResponse{Ads: responseAds[:]}
 	} else {
-		return ListAdsResponse{Ads: responseAds[:maxListedAds]}
+		if len(responseAds) <= maxListedAds {
+			return ListAdsResponse{Ads: responseAds[:]}
+		} else {
+			return ListAdsResponse{Ads: responseAds[:maxListedAds]}
+		}
 	}
 }
