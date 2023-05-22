@@ -22,15 +22,15 @@ func (_m *AdRepository) EXPECT() *AdRepository_Expecter {
 }
 
 // FindAll provides a mock function with given fields:
-func (_m *AdRepository) FindAll() []ad.Ad {
+func (_m *AdRepository) FindAll() *[]ad.Ad {
 	ret := _m.Called()
 
-	var r0 []ad.Ad
-	if rf, ok := ret.Get(0).(func() []ad.Ad); ok {
+	var r0 *[]ad.Ad
+	if rf, ok := ret.Get(0).(func() *[]ad.Ad); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]ad.Ad)
+			r0 = ret.Get(0).(*[]ad.Ad)
 		}
 	}
 
@@ -54,25 +54,27 @@ func (_c *AdRepository_FindAll_Call) Run(run func()) *AdRepository_FindAll_Call 
 	return _c
 }
 
-func (_c *AdRepository_FindAll_Call) Return(_a0 []ad.Ad) *AdRepository_FindAll_Call {
+func (_c *AdRepository_FindAll_Call) Return(_a0 *[]ad.Ad) *AdRepository_FindAll_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *AdRepository_FindAll_Call) RunAndReturn(run func() []ad.Ad) *AdRepository_FindAll_Call {
+func (_c *AdRepository_FindAll_Call) RunAndReturn(run func() *[]ad.Ad) *AdRepository_FindAll_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // FindBy provides a mock function with given fields: id
-func (_m *AdRepository) FindBy(id ad.Id) ad.Ad {
+func (_m *AdRepository) FindBy(id ad.Id) *ad.Ad {
 	ret := _m.Called(id)
 
-	var r0 ad.Ad
-	if rf, ok := ret.Get(0).(func(ad.Id) ad.Ad); ok {
+	var r0 *ad.Ad
+	if rf, ok := ret.Get(0).(func(ad.Id) *ad.Ad); ok {
 		r0 = rf(id)
 	} else {
-		r0 = ret.Get(0).(ad.Ad)
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*ad.Ad)
+		}
 	}
 
 	return r0
@@ -96,18 +98,18 @@ func (_c *AdRepository_FindBy_Call) Run(run func(id ad.Id)) *AdRepository_FindBy
 	return _c
 }
 
-func (_c *AdRepository_FindBy_Call) Return(_a0 ad.Ad) *AdRepository_FindBy_Call {
+func (_c *AdRepository_FindBy_Call) Return(_a0 *ad.Ad) *AdRepository_FindBy_Call {
 	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *AdRepository_FindBy_Call) RunAndReturn(run func(ad.Id) ad.Ad) *AdRepository_FindBy_Call {
+func (_c *AdRepository_FindBy_Call) RunAndReturn(run func(ad.Id) *ad.Ad) *AdRepository_FindBy_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Persist provides a mock function with given fields: _a0
-func (_m *AdRepository) Persist(_a0 ad.Ad) {
+func (_m *AdRepository) Persist(_a0 *ad.Ad) {
 	_m.Called(_a0)
 }
 
@@ -117,14 +119,14 @@ type AdRepository_Persist_Call struct {
 }
 
 // Persist is a helper method to define mock.On call
-//   - _a0 ad.Ad
+//   - _a0 *ad.Ad
 func (_e *AdRepository_Expecter) Persist(_a0 interface{}) *AdRepository_Persist_Call {
 	return &AdRepository_Persist_Call{Call: _e.mock.On("Persist", _a0)}
 }
 
-func (_c *AdRepository_Persist_Call) Run(run func(_a0 ad.Ad)) *AdRepository_Persist_Call {
+func (_c *AdRepository_Persist_Call) Run(run func(_a0 *ad.Ad)) *AdRepository_Persist_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(ad.Ad))
+		run(args[0].(*ad.Ad))
 	})
 	return _c
 }
@@ -134,7 +136,7 @@ func (_c *AdRepository_Persist_Call) Return() *AdRepository_Persist_Call {
 	return _c
 }
 
-func (_c *AdRepository_Persist_Call) RunAndReturn(run func(ad.Ad)) *AdRepository_Persist_Call {
+func (_c *AdRepository_Persist_Call) RunAndReturn(run func(*ad.Ad)) *AdRepository_Persist_Call {
 	_c.Call.Return(run)
 	return _c
 }

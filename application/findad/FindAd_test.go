@@ -15,7 +15,7 @@ var (
 )
 
 func TestFindAnExistingAd(t *testing.T) {
-	mockedAdRepository.EXPECT().FindBy(mock.Anything).Return(fixtures.FirstAd)
+	mockedAdRepository.EXPECT().FindBy(mock.Anything).Return(&fixtures.FirstAd)
 
 	response := findAdService.Execute(FindAdRequest{AdId: fixtures.FirstAd.Id.Value})
 
@@ -23,7 +23,7 @@ func TestFindAnExistingAd(t *testing.T) {
 	assert.Equal(
 		t,
 		FindAdResponse{
-			AdResponse: applicationResponse.AdResponse{
+			AdResponse: &applicationResponse.AdResponse{
 				Id:          fixtures.FirstAd.Id.Value,
 				Title:       fixtures.FirstAd.Title,
 				Description: fixtures.FirstAd.Description,

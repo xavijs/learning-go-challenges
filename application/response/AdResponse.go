@@ -10,8 +10,8 @@ type AdResponse struct {
 	PublishedAt string
 }
 
-func FromDomain(domainAd ad.Ad) AdResponse {
-	return AdResponse{
+func FromDomain(domainAd *ad.Ad) *AdResponse {
+	return &AdResponse{
 		Id:          domainAd.Id.Value,
 		Title:       domainAd.Title,
 		Description: domainAd.Description,

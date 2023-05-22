@@ -2,22 +2,62 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"learning-go-challenges/application/findAd"
 	"learning-go-challenges/application/listAds"
 	"learning-go-challenges/application/postAd"
 	"learning-go-challenges/domain/ad"
 	"learning-go-challenges/domain/clock"
 	"learning-go-challenges/domain/uuid"
+	"learning-go-challenges/infrastructure/http"
 	"learning-go-challenges/infrastructure/repository"
 	"math/rand"
+	netHttp "net/http"
 	"strconv"
 )
 
+var (
+	RepositoryMemory = &[]ad.Ad{}
+	adRepository     = repository.NewInMemoryAdRepository(RepositoryMemory)
+	postAdService    = postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
+	findAdService    = findad.NewFindAdService(adRepository)
+	listAdsService   = listads.NewListAdsService(adRepository)
+)
+
+func SetupHttpRouter() *gin.Engine {
+	r := gin.Default()
+	r.GET("/ads/:id", func(c *gin.Context) {
+		response := findAdService.Execute(findad.FindAdRequest{
+			AdId: c.Param("id"),
+		})
+		switch response.AdResponse {
+		case nil:
+			c.JSON(netHttp.StatusNotFound, nil)
+		default:
+			c.JSON(netHttp.StatusOK, http.FromApplicationResponse(response.AdResponse))
+		}
+	})
+	r.POST("/ads", func(c *gin.Context) {
+		var request http.PostAdHttpRequest
+
+		if err := c.BindJSON(&request); err != nil {
+			c.JSON(netHttp.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		postedAd := postAdService.Execute(postad.PostAdRequest{
+			Title:       request.Title,
+			Description: request.Description,
+			Price:       request.Price,
+		})
+		c.JSON(netHttp.StatusCreated, http.FromApplicationResponse(postedAd.AdResponse))
+	})
+	return r
+}
+
 func main() {
-	adRepository := repository.NewInMemoryAdRepository(&[]ad.Ad{})
-	postAdService := postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
-	findAdService := findad.NewFindAdService(adRepository)
-	listAdsService := listads.NewListAdsService(adRepository)
+	r := SetupHttpRouter()
+	r.Run(":8080")
 
 	fmt.Println("Welcome to new Marketplace!!")
 	fmt.Println("Insert your Ad")
@@ -49,9 +89,9 @@ func main() {
 			},
 		)
 	}
-	fmt.Printf("%v Ads in repository: %v \n", len(adRepository.FindAll()), adRepository.FindAll())
+	fmt.Printf("%v Ads in repository: %v \n", len(*adRepository.FindAll()), adRepository.FindAll())
 
 	var limitListedAds uint = 2
 	listedAds := listAdsService.Execute(listads.ListAdsRequest{Limit: limitListedAds})
-	fmt.Printf("Listing %v ads: %v \n", len(listedAds.Ads), listedAds)
+	fmt.Printf("Listing %v ads: %+v \n", len(listedAds.Ads), listedAds.Ads)
 }
