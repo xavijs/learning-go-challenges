@@ -10,7 +10,7 @@ type FindAdRequest struct {
 }
 
 type FindAdResponse struct {
-	AdResponse response.AdResponse
+	AdResponse *response.AdResponse
 }
 
 type FindAdService struct {
@@ -24,6 +24,8 @@ func NewFindAdService(adRepository ad.AdRepository) *FindAdService {
 func (dependencies FindAdService) Execute(request FindAdRequest) FindAdResponse {
 	adId := ad.Id{Value: request.AdId}
 	foundAd := dependencies.AdRepository.FindBy(adId)
-
+	if foundAd == nil {
+		return FindAdResponse{AdResponse: nil}
+	}
 	return FindAdResponse{AdResponse: response.FromDomain(foundAd)}
 }

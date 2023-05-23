@@ -10,7 +10,7 @@ type ListAdsRequest struct {
 }
 
 type ListAdsResponse struct {
-	Ads []response.AdResponse
+	Ads []*response.AdResponse
 }
 
 type ListAdsService struct {
@@ -26,9 +26,9 @@ const maxListedAds = 5
 func (dependencies ListAdsService) Execute(request ListAdsRequest) ListAdsResponse {
 	ads := dependencies.AdRepository.FindAll()
 
-	var responseAds []response.AdResponse
-	for _, domainAd := range ads {
-		responseAds = append(responseAds, response.FromDomain(domainAd))
+	var responseAds = make([]*response.AdResponse, 0)
+	for _, domainAd := range *ads {
+		responseAds = append(responseAds, response.FromDomain(&domainAd))
 	}
 	if request.Limit < maxListedAds {
 		return ListAdsResponse{Ads: responseAds[:]}

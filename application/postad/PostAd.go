@@ -14,7 +14,7 @@ type PostAdRequest struct {
 }
 
 type PostAdResponse struct {
-	AdResponse AdResponse
+	AdResponse *AdResponse
 }
 
 type PostAdService struct {
@@ -41,5 +41,5 @@ func (dependencies *PostAdService) Execute(request PostAdRequest) PostAdResponse
 	)
 	dependencies.AdRepository.Persist(newAd)
 
-	return PostAdResponse{AdResponse: FromDomain(*newAd)}
+	return PostAdResponse{AdResponse: FromDomain(newAd)}
 }
