@@ -22,6 +22,7 @@ var (
 	postAdService    = postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
 	findAdService    = findad.NewFindAdService(adRepository)
 	listAdsService   = listads.NewListAdsService(adRepository)
+	HttpController   = SetupHttpRouter()
 )
 
 func SetupHttpRouter() *gin.Engine {
@@ -56,8 +57,7 @@ func SetupHttpRouter() *gin.Engine {
 }
 
 func main() {
-	r := SetupHttpRouter()
-	r.Run(":8080")
+	HttpController.Run(":8080")
 
 	fmt.Println("Welcome to new Marketplace!!")
 	fmt.Println("Insert your Ad")

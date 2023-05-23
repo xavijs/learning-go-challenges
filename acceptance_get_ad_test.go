@@ -23,12 +23,11 @@ func TestGetAnAd(t *testing.T) {
 		PublishedAt: currentTimestamp,
 	}}
 
-	router := main.SetupHttpRouter()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ads/e85d27d4-3a6d-410f-a334-fdb52452fc17", nil)
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(w, req)
+	main.HttpController.ServeHTTP(w, req)
 
 	expectedResponse := `{
 			"id": "e85d27d4-3a6d-410f-a334-fdb52452fc17" , 
@@ -44,12 +43,11 @@ func TestGetAnAd(t *testing.T) {
 func TestGetNonExistingAd(t *testing.T) {
 	*main.RepositoryMemory = []ad.Ad{}
 
-	router := main.SetupHttpRouter()
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ads/e85d27d4-3a6d-410f-a334-fdb52452fc17", nil)
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(w, req)
+	main.HttpController.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusNotFound, w.Code)
 }

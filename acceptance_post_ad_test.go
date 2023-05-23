@@ -13,15 +13,13 @@ import (
 )
 
 func TestPostAnAd(t *testing.T) {
-	router := main.SetupHttpRouter()
-
 	w := httptest.NewRecorder()
 
 	requestBody := `{"title": "A Title", "description": "An ad description", "price": 100}`
 	req, _ := http.NewRequest("POST", "/ads", bytes.NewBufferString(requestBody))
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(w, req)
+	main.HttpController.ServeHTTP(w, req)
 	postedAdId := extractIdFromJsonResponse(w.Body.String())
 
 	assert.Equal(t, http.StatusCreated, w.Code)
@@ -30,7 +28,6 @@ func TestPostAnAd(t *testing.T) {
 
 func TestFailWhenMissingDataInRequest(t *testing.T) {
 	*main.RepositoryMemory = []ad.Ad{}
-	router := main.SetupHttpRouter()
 
 	w := httptest.NewRecorder()
 
@@ -38,7 +35,7 @@ func TestFailWhenMissingDataInRequest(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/ads", bytes.NewBufferString(requestBody))
 	req.Header.Set("Content-Type", "application/json")
 
-	router.ServeHTTP(w, req)
+	main.HttpController.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
 	assert.Empty(t, main.RepositoryMemory)
