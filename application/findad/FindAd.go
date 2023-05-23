@@ -23,7 +23,7 @@ func NewFindAdService(adRepository ad.AdRepository) *FindAdService {
 
 func (dependencies FindAdService) Execute(request FindAdRequest) FindAdResponse {
 	adId := ad.Id{Value: request.AdId}
-	foundAd := dependencies.AdRepository.FindBy(adId)
+	foundAd, _ := dependencies.AdRepository.FindBy(adId)
 	if foundAd == nil {
 		return FindAdResponse{AdResponse: nil}
 	}

@@ -1,9 +1,9 @@
 package ad
 
 type AdRepository interface {
-	FindBy(id Id) *Ad
+	FindBy(id Id) (*Ad, error)
 
 	Persist(ad *Ad)
 
-	FindAll() *[]Ad
+	FindAll() (*[]Ad, error)
 }

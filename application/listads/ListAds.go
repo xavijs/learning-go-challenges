@@ -24,7 +24,7 @@ func NewListAdsService(adRepository ad.AdRepository) *ListAdsService {
 const maxListedAds = 5
 
 func (dependencies ListAdsService) Execute(request ListAdsRequest) ListAdsResponse {
-	ads := dependencies.AdRepository.FindAll()
+	ads, _ := dependencies.AdRepository.FindAll()
 
 	var responseAds = make([]*response.AdResponse, 0)
 	for _, domainAd := range *ads {

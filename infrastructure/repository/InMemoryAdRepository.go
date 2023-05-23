@@ -17,15 +17,15 @@ func (receiver *InMemoryAdRepository) Persist(ad *Ad) {
 	fmt.Println("AdRepository memory:", receiver.memory)
 }
 
-func (receiver *InMemoryAdRepository) FindBy(id Id) *Ad {
+func (receiver *InMemoryAdRepository) FindBy(id Id) (*Ad, error) {
 	for _, ad := range *receiver.memory {
 		if ad.Id == id {
-			return &ad
+			return &ad, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
 
-func (receiver *InMemoryAdRepository) FindAll() *[]Ad {
-	return receiver.memory
+func (receiver *InMemoryAdRepository) FindAll() (*[]Ad, error) {
+	return receiver.memory, nil
 }
