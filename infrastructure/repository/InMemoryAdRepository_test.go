@@ -15,7 +15,7 @@ var (
 func TestFindAllWith2Ads(t *testing.T) {
 	memory = []ad.Ad{fixtures.FirstAd, fixtures.SecondAd}
 
-	var ads = inMemoryRepository.FindAll()
+	var ads, _ = inMemoryRepository.FindAll()
 
 	assert.Contains(t, *ads, fixtures.FirstAd, fixtures.SecondAd)
 	assert.Len(t, *ads, 2)
@@ -24,7 +24,7 @@ func TestFindAllWith2Ads(t *testing.T) {
 func TestFindAdByExistingId(t *testing.T) {
 	memory = []ad.Ad{fixtures.FirstAd, fixtures.SecondAd}
 
-	foundAd := inMemoryRepository.FindBy(fixtures.FirstAd.Id)
+	foundAd, _ := inMemoryRepository.FindBy(fixtures.FirstAd.Id)
 
 	assert.Equal(t, fixtures.FirstAd, *foundAd, "Expected to found First Ad")
 }

@@ -52,11 +52,17 @@ func SetupHttpRouter() *gin.Engine {
 			return
 		}
 
-		postedAd := postAdService.Execute(postad.PostAdRequest{
+		postedAd, err := postAdService.Execute(postad.PostAdRequest{
 			Title:       request.Title,
 			Description: request.Description,
 			Price:       request.Price,
 		})
+
+		if err != nil {
+			c.JSON(netHttp.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
 		c.JSON(netHttp.StatusCreated, http.FromApplicationResponse(postedAd.AdResponse))
 	})
 	return r

@@ -2,7 +2,6 @@ package ad
 
 import (
 	"github.com/stretchr/testify/assert"
-	"learning-go-challenges/domain/ad/exception"
 	"testing"
 	"time"
 )
@@ -53,8 +52,9 @@ func TestFailWhenAdDescriptionIsLongerThan50Characters(t *testing.T) {
 		t.Run(test.description, func(t *testing.T) {
 			ad, err := NewAd(Id{Value: "random"}, "a title", test.description, 99, time.Now())
 
+			var expectedErrorMsg = "ad creation error description too long. Description: " + test.description
 			assert.Nil(t, ad)
-			assert.Error(t, err, exception.AdDescriptionTooLongException{})
+			assert.EqualError(t, err, expectedErrorMsg)
 		})
 	}
 }

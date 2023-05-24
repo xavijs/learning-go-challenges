@@ -20,11 +20,11 @@ var (
 )
 
 func TestPostAnAd(t *testing.T) {
-	mockedAdRepository.EXPECT().Persist(mock.AnythingOfType("Ad")).Return()
+	mockedAdRepository.EXPECT().Persist(mock.Anything).Return()
 	mockedUUIDGenerator.EXPECT().GenerateAsString().Return(anUUID)
 	mockedClock.EXPECT().NowAsUTC().Return(aTimestamp)
 
-	response := service.Execute(PostAdRequest{
+	response, _ := service.Execute(PostAdRequest{
 		Title:       "Titulo 1",
 		Description: "Descripcion 1",
 		Price:       99,
@@ -44,6 +44,21 @@ func TestPostAnAd(t *testing.T) {
 		Price:       expectedDomainAd.Price,
 		PublishedAt: expectedDomainAd.PublishedAt.String(),
 	}
-	mockedAdRepository.AssertCalled(t, "Persist", expectedDomainAd)
-	assert.Equal(t, PostAdResponse{AdResponse: expectedAdResponse}, response)
+	mockedAdRepository.AssertCalled(t, "Persist", &expectedDomainAd)
+	assert.Equal(t, PostAdResponse{AdResponse: &expectedAdResponse}, response)
+}
+
+func TestHandleErrorWhenNewAdFails(t *testing.T) {
+	mockedUUIDGenerator.EXPECT().GenerateAsString().Return(anUUID)
+	mockedClock.EXPECT().NowAsUTC().Return(aTimestamp)
+
+	longDescription := "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
+	_, err := service.Execute(PostAdRequest{
+		Title:       "Titulo 1",
+		Description: longDescription,
+		Price:       99,
+	})
+
+	expectedErrorMessage := ad.ErrorDescriptionTooLongException(longDescription).Error()
+	assert.EqualError(t, err, expectedErrorMessage)
 }

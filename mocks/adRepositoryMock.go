@@ -22,10 +22,14 @@ func (_m *AdRepository) EXPECT() *AdRepository_Expecter {
 }
 
 // FindAll provides a mock function with given fields:
-func (_m *AdRepository) FindAll() *[]ad.Ad {
+func (_m *AdRepository) FindAll() (*[]ad.Ad, error) {
 	ret := _m.Called()
 
 	var r0 *[]ad.Ad
+	var r1 error
+	if rf, ok := ret.Get(0).(func() (*[]ad.Ad, error)); ok {
+		return rf()
+	}
 	if rf, ok := ret.Get(0).(func() *[]ad.Ad); ok {
 		r0 = rf()
 	} else {
@@ -34,7 +38,13 @@ func (_m *AdRepository) FindAll() *[]ad.Ad {
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // AdRepository_FindAll_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindAll'
@@ -54,21 +64,25 @@ func (_c *AdRepository_FindAll_Call) Run(run func()) *AdRepository_FindAll_Call 
 	return _c
 }
 
-func (_c *AdRepository_FindAll_Call) Return(_a0 *[]ad.Ad) *AdRepository_FindAll_Call {
-	_c.Call.Return(_a0)
+func (_c *AdRepository_FindAll_Call) Return(_a0 *[]ad.Ad, _a1 error) *AdRepository_FindAll_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AdRepository_FindAll_Call) RunAndReturn(run func() *[]ad.Ad) *AdRepository_FindAll_Call {
+func (_c *AdRepository_FindAll_Call) RunAndReturn(run func() (*[]ad.Ad, error)) *AdRepository_FindAll_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // FindBy provides a mock function with given fields: id
-func (_m *AdRepository) FindBy(id ad.Id) *ad.Ad {
+func (_m *AdRepository) FindBy(id ad.Id) (*ad.Ad, error) {
 	ret := _m.Called(id)
 
 	var r0 *ad.Ad
+	var r1 error
+	if rf, ok := ret.Get(0).(func(ad.Id) (*ad.Ad, error)); ok {
+		return rf(id)
+	}
 	if rf, ok := ret.Get(0).(func(ad.Id) *ad.Ad); ok {
 		r0 = rf(id)
 	} else {
@@ -77,7 +91,13 @@ func (_m *AdRepository) FindBy(id ad.Id) *ad.Ad {
 		}
 	}
 
-	return r0
+	if rf, ok := ret.Get(1).(func(ad.Id) error); ok {
+		r1 = rf(id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // AdRepository_FindBy_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FindBy'
@@ -98,12 +118,12 @@ func (_c *AdRepository_FindBy_Call) Run(run func(id ad.Id)) *AdRepository_FindBy
 	return _c
 }
 
-func (_c *AdRepository_FindBy_Call) Return(_a0 *ad.Ad) *AdRepository_FindBy_Call {
-	_c.Call.Return(_a0)
+func (_c *AdRepository_FindBy_Call) Return(_a0 *ad.Ad, _a1 error) *AdRepository_FindBy_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *AdRepository_FindBy_Call) RunAndReturn(run func(ad.Id) *ad.Ad) *AdRepository_FindBy_Call {
+func (_c *AdRepository_FindBy_Call) RunAndReturn(run func(ad.Id) (*ad.Ad, error)) *AdRepository_FindBy_Call {
 	_c.Call.Return(run)
 	return _c
 }

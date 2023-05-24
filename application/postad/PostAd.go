@@ -31,15 +31,20 @@ func NewPostAdService(adRepository AdRepository, uuidGenerator UUIDGenerator, cl
 	}
 }
 
-func (dependencies *PostAdService) Execute(request PostAdRequest) PostAdResponse {
-	newAd, _ := NewAd(
+func (dependencies *PostAdService) Execute(request PostAdRequest) (*PostAdResponse, error) {
+	newAd, err := NewAd(
 		Id{Value: dependencies.UUIDGenerator.GenerateAsString()},
 		request.Title,
 		request.Description,
 		request.Price,
 		dependencies.Clock.NowAsUTC(),
 	)
+
+	if err != nil {
+		return nil, err
+	}
+
 	dependencies.AdRepository.Persist(newAd)
 
-	return PostAdResponse{AdResponse: FromDomain(newAd)}
+	return &PostAdResponse{AdResponse: FromDomain(newAd)}, nil
 }
