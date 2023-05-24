@@ -15,7 +15,7 @@ var (
 )
 
 func TestFindEmptyListOfAdsWithLimitUnderMaximumOf5(t *testing.T) {
-	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return([]ad.Ad{})
+	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return(&[]ad.Ad{}, nil)
 	defer adRepositoryStub.Unset()
 
 	response := service.Execute(ListAdsRequest{Limit: 3})
@@ -25,7 +25,7 @@ func TestFindEmptyListOfAdsWithLimitUnderMaximumOf5(t *testing.T) {
 }
 
 func TestFindEmptyListOfAdsWithLimitUpperMaximumOf5(t *testing.T) {
-	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return([]ad.Ad{})
+	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return(&[]ad.Ad{}, nil)
 	defer adRepositoryStub.Unset()
 
 	response := service.Execute(ListAdsRequest{Limit: 8})
@@ -35,13 +35,13 @@ func TestFindEmptyListOfAdsWithLimitUpperMaximumOf5(t *testing.T) {
 }
 
 func TestFindListOfAdsWithLimitBiggerThanExistingAdsInRepository(t *testing.T) {
-	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return([]ad.Ad{fixtures.FirstAd, fixtures.SecondAd})
+	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return(&[]ad.Ad{fixtures.FirstAd, fixtures.SecondAd}, nil)
 	defer adRepositoryStub.Unset()
 
 	response := service.Execute(ListAdsRequest{Limit: 8})
 
 	expectedResponse := ListAdsResponse{
-		Ads: []AdResponse{
+		Ads: []*AdResponse{
 			{
 				Id:          fixtures.FirstAd.Id.Value,
 				Title:       fixtures.FirstAd.Title,
@@ -62,13 +62,13 @@ func TestFindListOfAdsWithLimitBiggerThanExistingAdsInRepository(t *testing.T) {
 }
 
 func TestFindListOfAdsWith2ElementsLimitUnderMaximumOf5(t *testing.T) {
-	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return([]ad.Ad{fixtures.FirstAd, fixtures.SecondAd})
+	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return(&[]ad.Ad{fixtures.FirstAd, fixtures.SecondAd}, nil)
 	defer adRepositoryStub.Unset()
 
 	response := service.Execute(ListAdsRequest{Limit: 4})
 
 	expectedResponse := ListAdsResponse{
-		Ads: []AdResponse{
+		Ads: []*AdResponse{
 			{
 				Id:          fixtures.FirstAd.Id.Value,
 				Title:       fixtures.FirstAd.Title,
@@ -90,20 +90,22 @@ func TestFindListOfAdsWith2ElementsLimitUnderMaximumOf5(t *testing.T) {
 
 func TestFindListOfAdsWithMoreThan5ElementsReturnsFirst5Elements(t *testing.T) {
 	adRepositoryStub := mockedAdRepository.EXPECT().FindAll().Return(
-		[]ad.Ad{
+		&[]ad.Ad{
 			fixtures.FirstAd,
 			fixtures.SecondAd,
 			fixtures.FirstAd,
 			fixtures.SecondAd,
 			fixtures.FirstAd,
 			fixtures.SecondAd,
-		})
+		},
+		nil,
+	)
 	defer adRepositoryStub.Unset()
 
 	response := service.Execute(ListAdsRequest{Limit: 8})
 
 	expectedResponse := ListAdsResponse{
-		Ads: []AdResponse{
+		Ads: []*AdResponse{
 			{
 				Id:          fixtures.FirstAd.Id.Value,
 				Title:       fixtures.FirstAd.Title,
