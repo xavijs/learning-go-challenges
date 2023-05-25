@@ -2,10 +2,10 @@ package main_test
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/goccy/go-json"
 	"github.com/stretchr/testify/assert"
 	"learning-go-challenges"
-	"learning-go-challenges/domain/ad"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -27,8 +27,6 @@ func TestPostAnAd(t *testing.T) {
 }
 
 func TestFailWhenMissingDataInRequest(t *testing.T) {
-	*main.RepositoryMemory = []ad.Ad{}
-
 	w := httptest.NewRecorder()
 
 	requestBody := `{"title": "A Title"}`
@@ -38,29 +36,17 @@ func TestFailWhenMissingDataInRequest(t *testing.T) {
 	main.HttpController.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusBadRequest, w.Code)
-	assert.Empty(t, main.RepositoryMemory)
 }
 
 func verifyAdExistsInDb(id string, t *testing.T) {
-	var foundAd ad.Ad
-	for _, ad := range *main.RepositoryMemory {
-		if ad.Id.Value == id {
-			foundAd = ad
-		}
-	}
-
-	expectedAd := ad.Ad{
-		Id:          ad.Id{Value: id},
-		Title:       "A Title",
-		Description: "An ad description",
-		Price:       100,
-		PublishedAt: time.Now().UTC(),
-	}
-
-	assert.Equal(t, expectedAd.Price, foundAd.Price)
-	assert.Equal(t, expectedAd.Title, foundAd.Title)
-	assert.Equal(t, expectedAd.Description, foundAd.Description)
-	assertTimeCloseToNowUTC(foundAd.PublishedAt, t)
+	var rows []map[string]interface{}
+	sql := fmt.Sprintf("SELECT id, title, description, price, published_at FROM ads WHERE id = '%v';", id)
+	dbConnection.Raw(sql).Scan(&rows)
+	dbAd := rows[0]
+	assert.EqualValues(t, 100, dbAd["price"])
+	assert.EqualValues(t, "A Title", dbAd["title"])
+	assert.EqualValues(t, "An ad description", dbAd["description"])
+	assertTimeCloseToNowUTC(t, dbAd["published_at"].(time.Time))
 }
 
 func extractIdFromJsonResponse(jsonResponse string) string {
@@ -72,7 +58,7 @@ func extractIdFromJsonResponse(jsonResponse string) string {
 	return data["id"].(string)
 }
 
-func assertTimeCloseToNowUTC(timeToVerify time.Time, t *testing.T) {
+func assertTimeCloseToNowUTC(t *testing.T, timeToVerify time.Time) {
 	currentTime := time.Now().UTC()
 	threshold := 10 * time.Second
 	diff := currentTime.Sub(timeToVerify)
