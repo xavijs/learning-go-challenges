@@ -2,24 +2,24 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"learning-go-challenges/application/findAd"
 	"learning-go-challenges/application/listAds"
 	"learning-go-challenges/application/postAd"
-	"learning-go-challenges/domain/ad"
 	"learning-go-challenges/domain/clock"
 	"learning-go-challenges/domain/uuid"
 	"learning-go-challenges/infrastructure/http"
-	"learning-go-challenges/infrastructure/repository"
+	"learning-go-challenges/infrastructure/repository/postgresrepository"
 	netHttp "net/http"
 )
 
 var (
-	RepositoryMemory = &[]ad.Ad{}
-	adRepository     = repository.NewInMemoryAdRepository(RepositoryMemory)
-	postAdService    = postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
-	findAdService    = findad.NewFindAdService(adRepository)
-	listAdsService   = listads.NewListAdsService(adRepository)
-	HttpController   = SetupHttpRouter()
+	adRepository   = postgresrepository.NewPostgresAdRepository(InitDb())
+	postAdService  = postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
+	findAdService  = findad.NewFindAdService(adRepository)
+	listAdsService = listads.NewListAdsService(adRepository)
+	HttpController = SetupHttpRouter()
 )
 
 func SetupHttpRouter() *gin.Engine {
@@ -70,4 +70,22 @@ func SetupHttpRouter() *gin.Engine {
 
 func main() {
 	HttpController.Run(":8080")
+}
+
+func InitDb() *gorm.DB {
+	println("Initializing DB")
+	dbParams := "host=localhost user=gochallenges password=123123 dbname=gogogo port=5431 sslmode=disable TimeZone=Europe/Madrid"
+	dbConnection, _ := gorm.Open(postgres.Open(dbParams), &gorm.Config{})
+
+	dbConnection.Exec("DROP SCHEMA public CASCADE;\nCREATE SCHEMA public;")
+	var createAdsTableSql = `CREATE TABLE ads (
+								id VARCHAR PRIMARY KEY,
+								title VARCHAR NOT NULL,
+								description TEXT NOT NULL,
+								price INTEGER NOT NULL,
+								published_at TIMESTAMP
+							);
+`
+	dbConnection.Exec(createAdsTableSql)
+	return dbConnection
 }

@@ -1,0 +1,9 @@
+services:
+  database:
+    image: postgres:14.5
+    ports:
+      - "5431:5432"
+    environment:
+      POSTGRES_USER: gochallenges
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: gogogo

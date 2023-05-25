@@ -3,7 +3,6 @@ package main_test
 import (
 	"github.com/stretchr/testify/assert"
 	"learning-go-challenges"
-	"learning-go-challenges/domain/ad"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,13 +14,7 @@ func TestGetAnAd(t *testing.T) {
 	layout := "2006-01-02 15:04:05"
 	currentTimestamp, _ := time.Parse(layout, dateString)
 
-	*main.RepositoryMemory = []ad.Ad{{
-		Id:          ad.Id{Value: "e85d27d4-3a6d-410f-a334-fdb52452fc17"},
-		Title:       "A title",
-		Description: "A description",
-		Price:       100,
-		PublishedAt: currentTimestamp,
-	}}
+	dbConnection.Exec("INSERT INTO ads VALUES ('e85d27d4-3a6d-410f-a334-fdb52452fc17', 'A title', 'A description', 100, ?)", currentTimestamp)
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ads/e85d27d4-3a6d-410f-a334-fdb52452fc17", nil)
@@ -41,8 +34,7 @@ func TestGetAnAd(t *testing.T) {
 }
 
 func TestGetNonExistingAd(t *testing.T) {
-	*main.RepositoryMemory = []ad.Ad{}
-
+	dbConnection.Exec("TRUNCATE ads")
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/ads/e85d27d4-3a6d-410f-a334-fdb52452fc17", nil)
 	req.Header.Set("Content-Type", "application/json")
