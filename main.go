@@ -77,6 +77,7 @@ func InitDb() *gorm.DB {
 	dbParams := "host=localhost user=gochallenges password=123123 dbname=gogogo port=5431 sslmode=disable TimeZone=Europe/Madrid"
 	dbConnection, _ := gorm.Open(postgres.Open(dbParams), &gorm.Config{})
 
+	dbConnection.Exec("DROP SCHEMA public CASCADE;\nCREATE SCHEMA public;")
 	var createAdsTableSql = `CREATE TABLE ads (
 								id VARCHAR PRIMARY KEY,
 								title VARCHAR NOT NULL,
@@ -85,7 +86,6 @@ func InitDb() *gorm.DB {
 								published_at TIMESTAMP
 							);
 `
-	dbConnection.Exec("TRUNCATE ads;")
 	dbConnection.Exec(createAdsTableSql)
 	return dbConnection
 }

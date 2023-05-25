@@ -1,6 +1,7 @@
 package postgresrepository
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"time"
 )
@@ -29,14 +30,15 @@ func (receiver *PostgresAdRepository) FindBy(id ad.Id) (*ad.Ad, error) {
 	return &foundAd, nil
 }
 
-func (receiver *PostgresAdRepository) Persist(ad *ad.Ad) {
+func (receiver *PostgresAdRepository) Persist(ad *ad.Ad) error {
 	sql := "INSERT INTO ads (id, title, description, price, published_at) VALUES (?, ?, ?, ?, ?)"
 	values := []interface{}{ad.Id.Value, ad.Title, ad.Description, ad.Price, ad.PublishedAt}
 
 	result := receiver.dbConnection.Exec(sql, values...)
 	if result.Error != nil {
-		panic("XJS ERROR!!!!")
+		return fmt.Errorf("error persisting Ad %v. Error: %v", ad, result.Error.Error())
 	}
+	return nil
 }
 
 func (receiver *PostgresAdRepository) FindAll() (*[]ad.Ad, error) {
