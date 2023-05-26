@@ -75,7 +75,11 @@ func main() {
 func InitDb() *gorm.DB {
 	println("Initializing DB")
 	dbParams := "host=localhost user=gochallenges password=123123 dbname=gogogo port=5431 sslmode=disable TimeZone=Europe/Madrid"
-	dbConnection, _ := gorm.Open(postgres.Open(dbParams), &gorm.Config{})
+	dbConnection, err := gorm.Open(postgres.Open(dbParams), &gorm.Config{})
+
+	if err != nil {
+		panic(err)
+	}
 
 	dbConnection.Exec("DROP SCHEMA public CASCADE;\nCREATE SCHEMA public;")
 	var createAdsTableSql = `CREATE TABLE ads (

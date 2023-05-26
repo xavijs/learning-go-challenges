@@ -129,8 +129,17 @@ func (_c *AdRepository_FindBy_Call) RunAndReturn(run func(ad.Id) (*ad.Ad, error)
 }
 
 // Persist provides a mock function with given fields: _a0
-func (_m *AdRepository) Persist(_a0 *ad.Ad) {
-	_m.Called(_a0)
+func (_m *AdRepository) Persist(_a0 *ad.Ad) error {
+	ret := _m.Called(_a0)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*ad.Ad) error); ok {
+		r0 = rf(_a0)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // AdRepository_Persist_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Persist'
@@ -151,12 +160,12 @@ func (_c *AdRepository_Persist_Call) Run(run func(_a0 *ad.Ad)) *AdRepository_Per
 	return _c
 }
 
-func (_c *AdRepository_Persist_Call) Return() *AdRepository_Persist_Call {
-	_c.Call.Return()
+func (_c *AdRepository_Persist_Call) Return(_a0 error) *AdRepository_Persist_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *AdRepository_Persist_Call) RunAndReturn(run func(*ad.Ad)) *AdRepository_Persist_Call {
+func (_c *AdRepository_Persist_Call) RunAndReturn(run func(*ad.Ad) error) *AdRepository_Persist_Call {
 	_c.Call.Return(run)
 	return _c
 }
