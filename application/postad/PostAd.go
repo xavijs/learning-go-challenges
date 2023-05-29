@@ -3,6 +3,7 @@ package postad
 import (
 	. "learning-go-challenges/application/response"
 	. "learning-go-challenges/domain/ad"
+	"learning-go-challenges/domain/adpublisher"
 	. "learning-go-challenges/domain/clock"
 	. "learning-go-challenges/domain/uuid"
 )
@@ -18,16 +19,18 @@ type PostAdResponse struct {
 }
 
 type PostAdService struct {
-	AdRepository  AdRepository
-	UUIDGenerator UUIDGenerator
-	Clock         Clock
+	AdRepository    AdRepository
+	UUIDGenerator   UUIDGenerator
+	Clock           Clock
+	BulkAdPublisher adpublisher.BulkAdPublisher
 }
 
-func NewPostAdService(adRepository AdRepository, uuidGenerator UUIDGenerator, clock Clock) *PostAdService {
+func NewPostAdService(adRepository AdRepository, uuidGenerator UUIDGenerator, clock Clock, BulkAdPublisher adpublisher.BulkAdPublisher) *PostAdService {
 	return &PostAdService{
-		AdRepository:  adRepository,
-		UUIDGenerator: uuidGenerator,
-		Clock:         clock,
+		AdRepository:    adRepository,
+		UUIDGenerator:   uuidGenerator,
+		Clock:           clock,
+		BulkAdPublisher: BulkAdPublisher,
 	}
 }
 
@@ -45,6 +48,7 @@ func (dependencies *PostAdService) Execute(request PostAdRequest) (*PostAdRespon
 	}
 
 	dependencies.AdRepository.Persist(newAd)
+	dependencies.BulkAdPublisher.Execute(*newAd)
 
 	return &PostAdResponse{AdResponse: FromDomain(newAd)}, nil
 }

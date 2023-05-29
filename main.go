@@ -7,6 +7,7 @@ import (
 	"learning-go-challenges/application/findAd"
 	"learning-go-challenges/application/listAds"
 	"learning-go-challenges/application/postAd"
+	"learning-go-challenges/domain/adpublisher"
 	"learning-go-challenges/domain/clock"
 	"learning-go-challenges/domain/uuid"
 	"learning-go-challenges/infrastructure/http"
@@ -16,7 +17,8 @@ import (
 
 var (
 	adRepository   = postgresrepository.NewPostgresAdRepository(InitDb())
-	postAdService  = postad.NewPostAdService(adRepository, uuid.RandomUUIDGenerator{}, clock.RealClock{})
+	adPublishers   = []adpublisher.AdPublisher{adpublisher.NewMilanunciosAdPublisher(), adpublisher.NewLeboncoinAdPublisher(), adpublisher.NewWallapopAdPublisher()}
+	postAdService  = postad.NewPostAdService(adRepository, uuid.NewRandomUUIDGenerator(), clock.NewRealClock(), *adpublisher.NewBulkAdPublisher(adPublishers))
 	findAdService  = findad.NewFindAdService(adRepository)
 	listAdsService = listads.NewListAdsService(adRepository)
 	HttpController = SetupHttpRouter()
@@ -82,14 +84,22 @@ func InitDb() *gorm.DB {
 	}
 
 	dbConnection.Exec("DROP SCHEMA public CASCADE;\nCREATE SCHEMA public;")
-	var createAdsTableSql = `CREATE TABLE ads (
-								id VARCHAR PRIMARY KEY,
-								title VARCHAR NOT NULL,
-								description TEXT NOT NULL,
-								price INTEGER NOT NULL,
-								published_at TIMESTAMP
-							);
+	var createDatabaseSql = `
+CREATE TABLE ads (
+	id VARCHAR PRIMARY KEY,
+	title VARCHAR NOT NULL,
+	description TEXT NOT NULL,
+	price INTEGER NOT NULL,
+	published_at TIMESTAMP
+);
+
+CREATE TABLE publisher_ads (
+    id VARCHAR PRIMARY KEY,
+    site_id VARCHAR NOT NULL,
+    site_ad_id VARCHAR NOT NULL,
+    is_published BOOLEAN
+)
 `
-	dbConnection.Exec(createAdsTableSql)
+	dbConnection.Exec(createDatabaseSql)
 	return dbConnection
 }

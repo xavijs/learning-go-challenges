@@ -8,6 +8,10 @@ type UUIDGenerator interface {
 
 type RandomUUIDGenerator struct{}
 
+func NewRandomUUIDGenerator() *RandomUUIDGenerator {
+	return &RandomUUIDGenerator{}
+}
+
 func (RandomUUIDGenerator) GenerateAsString() string {
 	return uuid.NewString()
 }
