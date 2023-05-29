@@ -8,6 +8,10 @@ type Clock interface {
 
 type RealClock struct{}
 
+func NewRealClock() *RealClock {
+	return &RealClock{}
+}
+
 func (RealClock) NowAsUTC() time.Time {
 	return time.Now().UTC()
 }
